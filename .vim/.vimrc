@@ -92,10 +92,10 @@ colorscheme jellybeans
 " Enable background image with custom colorscheme
 hi Normal ctermbg=none
 
-set runtimepath^=~/.vim/bundle/vim-clang-format
 set runtimepath^=~/.vim/bundle/YouCompleteMe
 set runtimepath^=~/.vim/bundle/tern_for_vim
 set runtimepath^=~/.vim/bundle/vimproc.vim
+set runtimepath^=~/.vim/bundle/vim-rails
 set runtimepath^=~/.vim/bundle/the_silver_searcher
 set runtimepath^=~/.vim/bundle/ag.vim
 set runtimepath^=~/.vim/bundle/typescript-vim
@@ -108,7 +108,8 @@ set runtimepath^=~/.vim/bundle/vim-airline-themes
 set runtimepath^=~/.vim/bundle/vim-jdaddy
 set runtimepath^=~/.vim/bundle/vim-fugitive
 set runtimepath^=~/.vim/bundle/vim-gitgutter
-set runtimepath^=~/.vim/bundle/vim-rails
+set runtimepath^=~/.vim/bundle/asyncrun.vim
+set runtimepath^=~/.vim/bundle/vim-clang-format
 
 " Syntastic settings
 set statusline+=%#warningmsg#
@@ -119,7 +120,6 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_wq = 0
 let g:tsuquyomi_disable_quickfix = 1
 let g:syntastic_typescript_checkers = ['tsuquyomi']
-"
 " https://github.com/scrooloose/syntastic/blob/master/doc/syntastic-checkers.txt for full list
 " needs https://github.com/feross/standard.git
 let g:syntastic_javascript_checkers = ['standard']
@@ -168,6 +168,14 @@ let g:airline_symbols.space = "\ua0"
 nmap ]h <Plug>GitGutterNextHunk
 nmap [h <Plug>GitGutterPrevHunk
 
+" Clang-format settings
+let g:clang_format#style_options = { 'AllowShortIfStatementsOnASingleLine' : 'true' }
+let g:clang_format#filetype_style_options = { 'cpp' : {'Standard' : 'C++11'} }
+map <C-I> :ClangFormat <CR>
+imap <C-I> <ESC> :ClangFormat <CR>i
+vnoremap <buffer><C-I> :ClangFormat <CR>
+autocmd bufwritepost *.cpp,*.h silent :ClangFormat
+
 " auto create when file does not exist (:e)
 function! s:mkdir(dir, force)
   if !isdirectory(a:dir) && (a:force || input(printf('"%s" does not exist. Create? [y/N]', a:dir)) =~? '^y\%[es]$')
@@ -210,27 +218,6 @@ inoremap <c-k> <up>
 inoremap <c-h> <left>
 inoremap <c-l> <right>
 
-function! SQLToJava()
-%s/^\(.\+\)$/"\1 " \+/g
- 
-normal G$
-execute "normal ?+\&lt;CR&gt;"
-normal xxggVG
-echo "Convert to Java String is finished."
-endfunction
-command! Sqltoj :call SQLToJava()
-function! SQLFromJava()
-%s/^"\(.\+\) " *+*$/\1/g
-  
-normal ggVG
-echo "Convert from Java String is finished."
-endfunction
-command! Sqlfromj :call SQLFromJava()
-
-
-au FileType ruby setlocal makeprg=ruby\ -c\ %
-au FileType ruby setlocal errorformat=%m\ in\ %f\ on\ line\ %l
-
 augroup configgroup
   autocmd!
   autocmd BufNewFile,BufRead *.ts setlocal filetype=typescript
@@ -239,10 +226,6 @@ augroup configgroup
   autocmd VimEnter * highlight clear SignColumn
   autocmd BufWritePre *.php,*.py,*.js,*.ts,*.tsx,*.txt,*.hs,*.java,*.md,*.c,*.cpp,*.h,*.rb :%s/\s\+$//e
   autocmd BufWritePre *.jj :%s/\s\+$//e
-  autocmd FileType java setlocal noexpandtab
-  autocmd FileType java setlocal list
-  autocmd FileType java setlocal listchars=tab:+\ ,eol:-
-  autocmd FileType java setlocal formatprg=par\ -w80\ -T4
   autocmd FileType java let g:syntastic_always_populate_loc_list = 0
   autocmd FileType java let g:syntastic_check_on_open = 0
   autocmd FileType java let g:syntastic_auto_loc_list = 2
@@ -262,6 +245,8 @@ augroup configgroup
   autocmd FileType ruby setlocal shiftwidth=2
   autocmd FileType ruby setlocal softtabstop=2
   autocmd FileType ruby setlocal commentstring=#\ %s
+  autocmd FileType ruby setlocal makeprg=ruby\ -c\ %
+  autocmd FileType ruby setlocal errorformat=%m\ in\ %f\ on\ line\ %l
   autocmd FileType python setlocal commentstring=#\ %s
   autocmd BufEnter *.cls setlocal filetype=java
   autocmd BufEnter *.zsh-theme setlocal filetype=zsh
