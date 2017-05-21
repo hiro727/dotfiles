@@ -88,6 +88,13 @@ nnoremap <leader>s :mksession<CR>
 onoremap af :<C-u>normal! ggVG<CR>
 
 set runtimepath^=~/.vim/bundle/jellybeans.vim
+set runtimepath^=~/.vim/bundle/vim-vividchalk
+set runtimepath^=~/.vim/bundle/vim-colors-solarized
+set runtimepath^=~/.vim/bundle/base16-vim
+set runtimepath^=~/.vim/bundle/tomorrow-theme
+set runtimepath^=~/.vim/bundle/vim-hybrid
+set runtimepath^=~/.vim/bundle/gruvbox
+
 colorscheme jellybeans
 " Enable background image with custom colorscheme
 hi Normal ctermbg=none
@@ -110,6 +117,12 @@ set runtimepath^=~/.vim/bundle/vim-fugitive
 set runtimepath^=~/.vim/bundle/vim-gitgutter
 set runtimepath^=~/.vim/bundle/asyncrun.vim
 set runtimepath^=~/.vim/bundle/vim-clang-format
+
+" OPTIONALS
+set runtimepath^=~/.vim/bundle/unite.vim
+set runtimepath^=~/.vim/bundle/neocomplete.vim
+set runtimepath^=~/.vim/bundle/neosnippet
+set runtimepath^=~/.vim/bundle/neosnippet-snippets
 
 " Syntastic settings
 set statusline+=%#warningmsg#
